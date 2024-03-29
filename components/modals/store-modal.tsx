@@ -30,7 +30,9 @@ import {
   PathValue,
 } from "react-hook-form";
 import { Textarea } from "@/components/ui/textarea";
+import { useState, useRef } from "react";
 
+//DECLARACIONES PARA EL FORM DE SHADCN
 const locationData = {
   "San José": {
     cantons: ["Cantón 1", "Cantón 2"],
@@ -51,18 +53,38 @@ const locationData = {
 
 const formSchema = z.object({
   name: z.string().nonempty("Store name is required"),
-  address: z.string().nonempty("Store address is required"),
+  address: z
+    .string()
+    .refine((value) => value.trim() !== "", "Address is required!"),
   province: z.string(),
   canton: z.string(),
   district: z.string(),
 });
 
+//METODOS PARA EL JSX
+
 export const StoreModal = () => {
-  const storeModal = useStoreModal();
+  //hooks al inicio, lo demas es para el jsx
+  const storeModal = useStoreModal(); //hook para abrir y cerrar el modal
+
+  const [height, setHeight] = useState("auto");
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  const handleTextAreaChange =
+    (field: any) => (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+      const text = event.target.value;
+      field.onChange(text); // Actualiza el valor del Textarea siempre
+      if (text.replace(/\s/g, "") === "") {
+        setHeight("auto"); // Establece la altura a 'auto' cuando el Textarea está vacío
+      } else {
+        setHeight(`${textareaRef.current!.scrollHeight}px`);
+      }
+    };
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
+      //valores por defecto
       name: "",
       address: "",
       province: "",
@@ -72,6 +94,7 @@ export const StoreModal = () => {
   });
 
   const locationData: {
+    //mapea las provincias y sus cantones y distritos
     [key: string]: {
       cantons: string[];
       districts: { [key: string]: string[] };
@@ -94,34 +117,39 @@ export const StoreModal = () => {
     // Add other provinces here
   };
 
-  const province = form.watch("province");
-  const canton = form.watch("canton");
+  const province = form.watch("province"); //obtiene el valor de la provincia
+  const canton = form.watch("canton"); //obtiene el valor del canton
 
-  const cantons = province ? locationData[province].cantons : [];
+  const cantons = province ? locationData[province].cantons : []; //obtiene los cantones de la provincia
   const districts =
-    province && canton ? locationData[province].districts[canton] : [];
+    province && canton ? locationData[province].districts[canton] : []; //obtiene los distritos de la provincia y canton
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    //maneja el submit del formulario
     // TODO: Create the store
     console.log({ values });
   };
 
-  const handleProvinceChange =
-    <TFieldValues extends FieldValues>(
-      form: UseFormReturn<TFieldValues>,
-      field: FieldPath<TFieldValues>
-    ) =>
-    (value: TFieldValues[FieldPath<TFieldValues>]) => {
-      form.setValue(
-        "canton" as FieldPath<TFieldValues>,
-        "" as PathValue<TFieldValues, FieldPath<TFieldValues>>
-      );
-      form.setValue(
-        "district" as FieldPath<TFieldValues>,
-        "" as PathValue<TFieldValues, FieldPath<TFieldValues>>
-      );
-      form.setValue(field, value);
-    };
+  const handleProvinceChange = //maneja el cambio de provincia
+
+      <TFieldValues extends FieldValues>( //tipado
+        form: UseFormReturn<TFieldValues>,
+        field: FieldPath<TFieldValues>
+      ) =>
+      (value: TFieldValues[FieldPath<TFieldValues>]) => {
+        //maneja el cambio de provincia
+        form.setValue(
+          //setea los valores de canton y distrito
+          "canton" as FieldPath<TFieldValues>,
+          "" as PathValue<TFieldValues, FieldPath<TFieldValues>>
+        );
+        form.setValue(
+          //setea los valores de canton y distrito
+          "district" as FieldPath<TFieldValues>,
+          "" as PathValue<TFieldValues, FieldPath<TFieldValues>>
+        );
+        form.setValue(field, value); //setea el valor de la provincia
+      };
 
   return (
     <Modal
@@ -157,9 +185,12 @@ export const StoreModal = () => {
                     <FormLabel>Store Address</FormLabel>
                     <FormControl>
                       <Textarea
+                        ref={textareaRef}
+                        value={field.value}
+                        onChange={handleTextAreaChange(field)}
+                        style={{ height, maxHeight: "200px" }}
                         className="resize-none"
                         placeholder="Store Address"
-                        {...field}
                       />
                     </FormControl>
                     <FormMessage />
