@@ -56,9 +56,9 @@ const formSchema = z.object({
   address: z
     .string()
     .refine((value) => value.trim() !== "", "Address is required!"),
-  province: z.string(),
-  canton: z.string(),
-  district: z.string(),
+    province: z.string().nonempty("Province is required"),
+    canton: z.string().nonempty("Canton is required"),
+    district: z.string().nonempty("District is required"),
 });
 
 //METODOS PARA EL JSX
@@ -170,7 +170,11 @@ export const StoreModal = () => {
                     <FormLabel>Store Name</FormLabel>
                     <FormControl>
                       {/*manejo de errores */}
-                      <Input placeholder="Store Name" {...field} />
+                      <Input
+                        className="bg-white border-2 text-[#252440] placeholder-gray-500"
+                        placeholder="Store Name"
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage /> {/*muestra los errores */}
                   </FormItem>
@@ -189,7 +193,7 @@ export const StoreModal = () => {
                         value={field.value}
                         onChange={handleTextAreaChange(field)}
                         style={{ height, maxHeight: "200px" }}
-                        className="resize-none"
+                        className="resize-none bg-white border-2 text-[#252440] placeholder-gray-500"
                         placeholder="Store Address"
                       />
                     </FormControl>
@@ -274,10 +278,19 @@ export const StoreModal = () => {
                 />
               )}
               <div className="pt-6 space-x-2 flex items-center justify-end w-full">
-                <Button variant="outline" onClick={storeModal.onClose}>
+                <Button
+                  className="border-2 border-[#252440] text-[#252440] hover:bg-[#252440] hover:text-white"
+                  variant="outline"
+                  onClick={storeModal.onClose}
+                >
                   Cancel
                 </Button>
-                <Button type="submit">Continue</Button>
+                <Button
+                  className="border-2 text-[#252440] bg-[#FFD700] hover:bg-[#ADD8E6] border-[#252440] hover:border-[#FFD700] transition duration-300 ease-in-out hover:text-[#FFFFFF]"
+                  type="submit"
+                >
+                  Continue
+                </Button>
               </div>
             </form>
           </Form>

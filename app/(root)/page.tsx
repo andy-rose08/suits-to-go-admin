@@ -4,6 +4,7 @@ import { Poppins } from "next/font/google";
 import { cn } from "@/lib/utils";
 import { useStoreModal } from "@/hooks/use-store-modal";
 import { useEffect } from "react";
+import { UserButton } from "@clerk/nextjs";
 
 const font = Poppins({
   subsets: ["latin"],
@@ -17,13 +18,7 @@ const SetUpPage = () => {
     if (!isOpen) onOpen();
   }, [isOpen, onOpen]);
 
-  return (
-    <div
-      className={(cn("text-6xl font-semibold drop-shadow-md"), font.className)}
-    >
-      Home Page
-    </div>
-  );
+  return <div className="p-4">Modal</div>;
 };
 
 export default SetUpPage;
