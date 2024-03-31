@@ -30,35 +30,17 @@ import {
   PathValue,
 } from "react-hook-form";
 import { Textarea } from "@/components/ui/textarea";
-import { useState, useRef } from "react";
-
-//DECLARACIONES PARA EL FORM DE SHADCN
-const locationData = {
-  "San José": {
-    cantons: ["Cantón 1", "Cantón 2"],
-    districts: {
-      "Cantón 1": ["Distrito 1", "Distrito 2"],
-      "Cantón 2": ["Distrito 3", "Distrito 4"],
-    },
-  },
-  Alajuela: {
-    cantons: ["Cantón 3", "Cantón 4"],
-    districts: {
-      "Cantón 3": ["Distrito 5", "Distrito 6"],
-      "Cantón 4": ["Distrito 7", "Distrito 8"],
-    },
-  },
-  // Agrega aquí las demás provincias
-};
+import { useState, useEffect, useRef } from "react";
+import axios from "axios";
 
 const formSchema = z.object({
-  name: z.string().nonempty("Store name is required"),
+  store_name: z.string().nonempty("Store name is required"),
   address: z
     .string()
     .refine((value) => value.trim() !== "", "Address is required!"),
-    province: z.string().nonempty("Province is required"),
-    canton: z.string().nonempty("Canton is required"),
-    district: z.string().nonempty("District is required"),
+  province_id: z.string().nonempty("Province is required"),
+  canton_id: z.string().nonempty("Canton is required"),
+  district_id: z.string().nonempty("District is required"),
 });
 
 //METODOS PARA EL JSX
@@ -67,8 +49,46 @@ export const StoreModal = () => {
   //hooks al inicio, lo demas es para el jsx
   const storeModal = useStoreModal(); //hook para abrir y cerrar el modal
 
+  const [locationData, setLocationData] = useState<{
+    provinces: { province_id: string; name: string }[];
+
+    cantons: { canton_id: string; name: string; province_id: string }[];
+
+    districts: { district_id: string; name: string; canton_id: string }[];
+  } | null>(null); //hook para manejar la data de la ubicacion
+
+  const [isLoading, setIsLoading] = useState(true); //hook para manejar el estado de carga del fetching de las provincias, cantones y distritos
+  const [loading, setLoading] = useState(false); //hook para manejar el estado de carga al darle al boton de submit
   const [height, setHeight] = useState("auto");
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [provinceRes, cantonRes, districtRes] = await Promise.all([
+          axios.get("/api/provinces"),
+
+          axios.get("/api/cantons"),
+
+          axios.get("/api/districts"),
+        ]);
+
+        setLocationData({
+          provinces: provinceRes.data,
+
+          cantons: cantonRes.data,
+
+          districts: districtRes.data,
+        });
+      } catch (error) {
+        console.error("Error fetching location data:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   const handleTextAreaChange =
     (field: any) => (event: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -85,71 +105,129 @@ export const StoreModal = () => {
     resolver: zodResolver(formSchema),
     defaultValues: {
       //valores por defecto
-      name: "",
+      store_name: "",
       address: "",
-      province: "",
-      canton: "",
-      district: "",
+      province_id: "",
+      canton_id: "",
+      district_id: "",
     },
   });
 
-  const locationData: {
-    //mapea las provincias y sus cantones y distritos
-    [key: string]: {
-      cantons: string[];
-      districts: { [key: string]: string[] };
-    };
-  } = {
-    "San José": {
-      cantons: ["Cantón 1", "Cantón 2"],
-      districts: {
-        "Cantón 1": ["Distrito 1", "Distrito 2"],
-        "Cantón 2": ["Distrito 3", "Distrito 4"],
-      },
-    },
-    Alajuela: {
-      cantons: ["Cantón 3", "Cantón 4"],
-      districts: {
-        "Cantón 3": ["Distrito 5", "Distrito 6"],
-        "Cantón 4": ["Distrito 7", "Distrito 8"],
-      },
-    },
-    // Add other provinces here
-  };
+  const province = form.watch("province_id"); //obtiene el valor de la provincia
+  const canton = form.watch("canton_id"); //obtiene el valor del canton
 
-  const province = form.watch("province"); //obtiene el valor de la provincia
-  const canton = form.watch("canton"); //obtiene el valor del canton
+  const cantons =
+    province &&
+    locationData &&
+    locationData.provinces.find((p) => p.province_id === province)
+      ? locationData.cantons.filter(
+          (c) =>
+            c.province_id ===
+            locationData.provinces.find((p) => p.province_id === province)
+              ?.province_id
+        )
+      : [];
 
-  const cantons = province ? locationData[province].cantons : []; //obtiene los cantones de la provincia
   const districts =
-    province && canton ? locationData[province].districts[canton] : []; //obtiene los distritos de la provincia y canton
+    province && canton && locationData
+      ? locationData.districts.filter((d) => d.canton_id === canton)
+      : [];
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     //maneja el submit del formulario
-    // TODO: Create the store
-    console.log({ values });
+    try {
+      setLoading(true);
+      const response = await axios.post("/api/stores", values); //envia los valores del formulario al backend
+
+      console.log(response.data); //muestra la respuesta del backend
+    } catch (error) {
+      console.log("[STORES_POST]", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleProvinceChange = //maneja el cambio de provincia
+  const handleProvinceChange =
+    <TFieldValues extends FieldValues>(
+      form: UseFormReturn<TFieldValues>,
+      field: FieldPath<TFieldValues>
+    ) =>
+    (value: TFieldValues[FieldPath<TFieldValues>]) => {
+      const currentCanton = form.getValues("canton" as FieldPath<TFieldValues>);
+      const currentDistrict = form.getValues(
+        "district" as FieldPath<TFieldValues>
+      );
 
-      <TFieldValues extends FieldValues>( //tipado
-        form: UseFormReturn<TFieldValues>,
-        field: FieldPath<TFieldValues>
-      ) =>
-      (value: TFieldValues[FieldPath<TFieldValues>]) => {
-        //maneja el cambio de provincia
-        form.setValue(
-          //setea los valores de canton y distrito
-          "canton" as FieldPath<TFieldValues>,
-          "" as PathValue<TFieldValues, FieldPath<TFieldValues>>
+      if (locationData) {
+        const selectedProvince = locationData.provinces.find(
+          (p) => p.province_id === value
         );
-        form.setValue(
-          //setea los valores de canton y distrito
-          "district" as FieldPath<TFieldValues>,
-          "" as PathValue<TFieldValues, FieldPath<TFieldValues>>
+
+        if (selectedProvince) {
+          const cantonOptions = locationData.cantons.filter(
+            (c) => c.province_id === selectedProvince.province_id
+          );
+
+          form.setValue(
+            "canton" as FieldPath<TFieldValues>,
+            "" as PathValue<TFieldValues, FieldPath<TFieldValues>> // Fix: Cast the empty string to the appropriate type
+          );
+          form.setValue(
+            "district" as FieldPath<TFieldValues>,
+            "" as PathValue<TFieldValues, FieldPath<TFieldValues>> // Fix: Cast the empty string to the appropriate type
+          );
+        }
+      }
+
+      form.setValue(
+        "canton" as FieldPath<TFieldValues>,
+        "" as PathValue<TFieldValues, FieldPath<TFieldValues>>
+      );
+      form.setValue(
+        "district" as FieldPath<TFieldValues>,
+        "" as PathValue<TFieldValues, FieldPath<TFieldValues>>
+      );
+      form.setValue(field, value);
+    };
+
+  const handleCantonChange =
+    <TFieldValues extends FieldValues>(
+      form: UseFormReturn<TFieldValues>,
+      field: FieldPath<TFieldValues>
+    ) =>
+    (value: TFieldValues[FieldPath<TFieldValues>]) => {
+      if (locationData) {
+        const selectedCanton = locationData.cantons.find(
+          (c) => c.canton_id === value
         );
-        form.setValue(field, value); //setea el valor de la provincia
-      };
+
+        if (selectedCanton) {
+          const districtOptions = locationData.districts.filter(
+            (d) => d.canton_id === selectedCanton.canton_id
+          );
+
+          form.setValue(
+            "district" as FieldPath<TFieldValues>,
+            "" as PathValue<TFieldValues, FieldPath<TFieldValues>>,
+            { shouldValidate: true }
+          );
+          form.setValue(
+            "district" as FieldPath<TFieldValues>,
+            districtOptions[0]?.district_id as PathValue<
+              TFieldValues,
+              FieldPath<TFieldValues>
+            >,
+            { shouldValidate: true }
+          );
+        }
+      }
+
+      form.setValue(
+        "district" as FieldPath<TFieldValues>,
+        "" as PathValue<TFieldValues, FieldPath<TFieldValues>>
+      );
+      form.setValue(field, value);
+    };
 
   return (
     <Modal
@@ -164,13 +242,14 @@ export const StoreModal = () => {
             <form onSubmit={form.handleSubmit(onSubmit)}>
               <FormField
                 control={form.control}
-                name="name"
+                name="store_name"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Store Name</FormLabel>
                     <FormControl>
                       {/*manejo de errores */}
                       <Input
+                        disabled={loading}
                         className="bg-white border-2 text-[#252440] placeholder-gray-500"
                         placeholder="Store Name"
                         {...field}
@@ -189,6 +268,7 @@ export const StoreModal = () => {
                     <FormLabel>Store Address</FormLabel>
                     <FormControl>
                       <Textarea
+                        disabled={loading}
                         ref={textareaRef}
                         value={field.value}
                         onChange={handleTextAreaChange(field)}
@@ -201,13 +281,15 @@ export const StoreModal = () => {
                   </FormItem>
                 )}
               />
+
               <FormField
                 control={form.control}
-                name="province"
+                name="province_id"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Province</FormLabel>
                     <Select
+                      disabled={loading || isLoading}
                       onValueChange={handleProvinceChange(form, field.name)}
                     >
                       <FormControl>
@@ -216,8 +298,14 @@ export const StoreModal = () => {
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value="San José">San José</SelectItem>
-                        <SelectItem value="Alajuela">Alajuela</SelectItem>
+                        {locationData?.provinces.map((province) => (
+                          <SelectItem
+                            key={province.province_id}
+                            value={province.province_id} // Use province_id as the value
+                          >
+                            {province.name}
+                          </SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
                     <FormMessage />
@@ -228,20 +316,26 @@ export const StoreModal = () => {
               {province && (
                 <FormField
                   control={form.control}
-                  name="canton"
+                  name="canton_id"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Canton</FormLabel>
-                      <Select onValueChange={field.onChange}>
+                      <Select
+                        disabled={loading || isLoading}
+                        onValueChange={handleCantonChange(form, field.name)}
+                      >
                         <FormControl>
                           <SelectTrigger>
                             <SelectValue placeholder="Select a canton" />
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          {cantons.map((canton: string) => (
-                            <SelectItem key={canton} value={canton}>
-                              {canton}
+                          {cantons.map((canton) => (
+                            <SelectItem
+                              key={canton.canton_id}
+                              value={canton.canton_id}
+                            >
+                              {canton.name}
                             </SelectItem>
                           ))}
                         </SelectContent>
@@ -251,14 +345,20 @@ export const StoreModal = () => {
                   )}
                 />
               )}
+
               {canton && (
                 <FormField
                   control={form.control}
-                  name="district"
+                  name="district_id"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Distrito</FormLabel>
-                      <Select onValueChange={field.onChange}>
+                      <FormLabel>District</FormLabel>
+                      <Select
+                        disabled={loading || isLoading}
+                        onValueChange={(value) =>
+                          form.setValue("district_id", value)
+                        }
+                      >
                         <FormControl>
                           <SelectTrigger>
                             <SelectValue placeholder="Select a district" />
@@ -266,8 +366,11 @@ export const StoreModal = () => {
                         </FormControl>
                         <SelectContent>
                           {districts.map((district) => (
-                            <SelectItem key={district} value={district}>
-                              {district}
+                            <SelectItem
+                              key={district.district_id}
+                              value={district.district_id}
+                            >
+                              {district.name}
                             </SelectItem>
                           ))}
                         </SelectContent>
@@ -277,8 +380,10 @@ export const StoreModal = () => {
                   )}
                 />
               )}
+
               <div className="pt-6 space-x-2 flex items-center justify-end w-full">
                 <Button
+                  disabled={loading}
                   className="border-2 border-[#252440] text-[#252440] hover:bg-[#252440] hover:text-white"
                   variant="outline"
                   onClick={storeModal.onClose}
@@ -286,6 +391,7 @@ export const StoreModal = () => {
                   Cancel
                 </Button>
                 <Button
+                  disabled={loading}
                   className="border-2 text-[#252440] bg-[#FFD700] hover:bg-[#ADD8E6] border-[#252440] hover:border-[#FFD700] transition duration-300 ease-in-out hover:text-[#FFFFFF]"
                   type="submit"
                 >

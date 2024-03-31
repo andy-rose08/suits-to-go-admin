@@ -15,3 +15,55 @@ datasource db {
 }
 
 
+model Province {
+  province_id String   @id
+  name        String
+  cantons     Canton[]  // Define the relationship with cantons
+  locations   Location[]// Define the opposite relation with locations
+}
+model Canton {
+  canton_id   String   @id
+  name        String
+  province_id String
+  province    Province @relation(fields: [province_id], references: [province_id])
+  districts   District[] // Define the relationship with districts
+  locations   Location[] // Define the relationship with locations
+  @@index([province_id])
+}
+
+model District {
+  district_id String   @id
+  name        String
+  canton_id   String
+  canton      Canton   @relation(fields: [canton_id], references: [canton_id])
+  locations   Location[] // Define the relationship with locations
+  @@index([canton_id])
+
+}
+
+
+model Location {
+  location_id String   @id @default(cuid())
+  address     String
+  province_id String
+  canton_id   String
+  district_id String
+  province    Province @relation(fields: [province_id], references: [province_id])
+  canton      Canton   @relation(fields: [canton_id], references: [canton_id])
+  district    District @relation(fields: [district_id], references: [district_id])
+  stores      Store[]  // Define the relationship with stores
+
+  @@index([province_id])
+  @@index([canton_id])
+  @@index([district_id])
+}
+
+
+model Store {
+  store_id   String    @id @default(cuid())
+  store_name String
+  userId     String
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  locations  Location[] // Define the relationship with locations
+}
