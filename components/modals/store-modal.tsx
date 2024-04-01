@@ -5,6 +5,9 @@ import { Modal } from "@/components/ui/modal";
 import * as z from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import {toast} from "react-hot-toast";
+
+
 import {
   Form,
   FormControl,
@@ -139,9 +142,9 @@ export const StoreModal = () => {
       setLoading(true);
       const response = await axios.post("/api/stores", values); //envia los valores del formulario al backend
 
-      console.log(response.data); //muestra la respuesta del backend
+      toast.success("Store created successfully!") //muestra la respuesta del backend
     } catch (error) {
-      console.log("[STORES_POST]", error);
+      toast.error("Something went wrong! Please try again.")
     } finally {
       setLoading(false);
     }
