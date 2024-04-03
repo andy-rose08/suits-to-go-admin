@@ -1,14 +1,13 @@
-"use client"
+"use client";
 
-import { ColumnDef } from "@tanstack/react-table"
-
+import { ColumnDef } from "@tanstack/react-table";
+import { CellAction } from "./cell-action";
 
 export type BillBoardColumn = {
-  id: string
-  label: string
-  createdAt: string
-
-}
+  id: string;
+  label: string;
+  createdAt: string;
+};
 
 export const columns: ColumnDef<BillBoardColumn>[] = [
   {
@@ -19,5 +18,8 @@ export const columns: ColumnDef<BillBoardColumn>[] = [
     accessorKey: "createdAt",
     header: "Date",
   },
-  
-]
+  {
+    id: "actions",
+    cell: ({ row }) => <CellAction data={row.original} />, //tansack react table to access the original object on the table
+  },
+];
