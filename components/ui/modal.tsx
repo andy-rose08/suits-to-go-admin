@@ -31,9 +31,9 @@ export const Modal: React.FC<ModalProps> = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={onChange}>
-      <DialogContent>
+      <DialogContent className="dark:bg-[#252440] bg-white">
         <DialogHeader>
-          <DialogTitle>{title}</DialogTitle>
+          <DialogTitle className="dark:text-white text-[#252440]">{title}</DialogTitle>
           <DialogDescription>{description}</DialogDescription>
         </DialogHeader>
         <div>{children}</div>

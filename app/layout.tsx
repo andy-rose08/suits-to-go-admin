@@ -22,7 +22,9 @@ export default function RootLayout({
   return (
     <ClerkProvider>
       <html lang="en">
-        <body className={inter.className}>
+        <body
+          className={`${inter.className} dark:bg-[#0D1A26] dark:text-white text-[#252440] bg-white`}
+        >
           <ToasterProvider />
           <ModalProvider />
           {children}

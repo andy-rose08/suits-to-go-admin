@@ -9,14 +9,15 @@ const DashboardPage: React.FC<DashboardPageProps> = async ({ params }) => {
     where: {
       store_id: params.store_id,
     },
-    include: { // es como un query aninado donde hago fetch de las locations y a su vez, de la provincia, canton y distrito asociados a esa store
-      locations:{
-        include:{
-          province:true,
-          canton:true,
-          district:true
-        }
-      }
+    include: {
+      // es como un query aninado donde hago fetch de las locations y a su vez, de la provincia, canton y distrito asociados a esa store
+      locations: {
+        include: {
+          province: true,
+          canton: true,
+          district: true,
+        },
+      },
     },
   });
 
@@ -32,7 +33,7 @@ const DashboardPage: React.FC<DashboardPageProps> = async ({ params }) => {
                 <p>Address: {location.address}</p>
                 <p>Province: {location.province.name}</p>
                 <p>Canton: {location.canton.name}</p>
-                
+                <p>District: {location.district.name}</p>
               </li>
             ))}
           </ul>

@@ -141,9 +141,8 @@ export const StoreModal = () => {
       setLoading(true);
       const response = await axios.post("/api/stores", values); //envia los valores del formulario al backend
 
-      window.location.assign(`/${response.data.store_id}`);//refresca la pagina
+      window.location.assign(`/${response.data.store_id}`); //refresca la pagina
       //100% se carga en la db, mas que nada para una mejor UX
-      
     } catch (error) {
       toast.error("Something went wrong! Please try again.");
     } finally {
@@ -297,11 +296,11 @@ export const StoreModal = () => {
                       onValueChange={handleProvinceChange(form, field.name)}
                     >
                       <FormControl>
-                        <SelectTrigger>
+                        <SelectTrigger className="dark:text-black text-black">
                           <SelectValue placeholder="Select a province" />
                         </SelectTrigger>
                       </FormControl>
-                      <SelectContent>
+                      <SelectContent className="text-black">
                         {locationData?.provinces.map((province) => (
                           <SelectItem
                             key={province.province_id}
@@ -329,7 +328,7 @@ export const StoreModal = () => {
                         onValueChange={handleCantonChange(form, field.name)}
                       >
                         <FormControl>
-                          <SelectTrigger>
+                          <SelectTrigger className="placeholder-gray-500 dark:text-[#252440] text-[#252440]">
                             <SelectValue placeholder="Select a canton" />
                           </SelectTrigger>
                         </FormControl>
@@ -364,7 +363,7 @@ export const StoreModal = () => {
                         }
                       >
                         <FormControl>
-                          <SelectTrigger>
+                          <SelectTrigger className="dark:text-black text-black">
                             <SelectValue placeholder="Select a district" />
                           </SelectTrigger>
                         </FormControl>
