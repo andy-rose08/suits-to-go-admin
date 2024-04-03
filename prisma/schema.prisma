@@ -21,6 +21,7 @@ model Province {
   cantons     Canton[]  // Define the relationship with cantons
   locations   Location[]// Define the opposite relation with locations
 }
+
 model Canton {
   canton_id   String   @id
   name        String
@@ -70,6 +71,19 @@ model Store {
   createdAt  DateTime  @default(now())
   updatedAt  DateTime  @updatedAt
   locations  Location[] // Define the relationship with locations
-
+  billboards Billboard[] @relation("StoreToBillboard") // Define the relationship with billboards
   
+}
+
+
+model Billboard{
+  id         String    @id @default(cuid())
+  store_id   String
+  store      Store     @relation("StoreToBillboard",fields: [store_id], references: [store_id])// Define the relationship with stores, la cual pertenece a un store especifico
+  label       String
+  imageUrl    String
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  @@index([store_id])
+
 }
