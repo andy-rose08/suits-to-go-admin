@@ -18,6 +18,11 @@ export function MainNav({
       active: pathname === `/${params.store_id}`,
     },
     {
+      href: `/${params.store_id}/billboards`,
+      label: "Billboards",
+      active: pathname === `/${params.store_id}/billboards`,
+    },
+    {
       href: `/${params.store_id}/settings`,
       label: "Settings",
       active: pathname === `/${params.store_id}/settings`,
@@ -32,7 +37,9 @@ export function MainNav({
           href={route.href}
           className={cn(
             "text-sm font-medium transition-colors hover:text-[#ADD8E6]",
-            route.active ? "text-[#9370DB] dark:text-[#1ABC9C]" : "text-[#FFD700]"
+            route.active
+              ? "text-[#9370DB] dark:text-[#1ABC9C]"
+              : "text-[#FFD700]"
           )}
         >
           {route.label}
