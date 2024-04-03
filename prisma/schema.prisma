@@ -73,7 +73,8 @@ model Store {
   locations  Location[] // Define the relationship with locations
   categories Category[] // Define the relationship with categories
   billboards Billboard[] @relation("StoreToBillboard") // Define the relationship with billboards
-  
+  sizes      Size[] @relation("StoreToSize") // Define the relationship with sizes
+  color      Color[] @relation("StoreToColor") // Define the relationship with colors
   
 }
 
@@ -102,5 +103,27 @@ model Category{
   updatedAt         DateTime  @updatedAt
 
   @@index([billboard_id])
+  @@index([store_id])
+}
+
+model Size{
+  size_id        String    @id @default(cuid())
+  store_id       String
+  store          Store     @relation("StoreToSize",fields: [store_id], references: [store_id])
+  name           String
+  value          String
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  @@index([store_id])
+}
+
+model Color{
+  color_id        String    @id @default(cuid())
+  store_id       String
+  store          Store     @relation("StoreToColor",fields: [store_id], references: [store_id])
+  name           String
+  value          String
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
   @@index([store_id])
 }
