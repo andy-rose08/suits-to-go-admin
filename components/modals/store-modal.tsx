@@ -5,8 +5,7 @@ import { Modal } from "@/components/ui/modal";
 import * as z from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import {toast} from "react-hot-toast";
-
+import { toast } from "react-hot-toast";
 
 import {
   Form,
@@ -142,9 +141,11 @@ export const StoreModal = () => {
       setLoading(true);
       const response = await axios.post("/api/stores", values); //envia los valores del formulario al backend
 
-      toast.success("Store created successfully!") //muestra la respuesta del backend
+      window.location.assign(`/${response.data.store_id}`);//refresca la pagina
+      //100% se carga en la db, mas que nada para una mejor UX
+      
     } catch (error) {
-      toast.error("Something went wrong! Please try again.")
+      toast.error("Something went wrong! Please try again.");
     } finally {
       setLoading(false);
     }
@@ -252,7 +253,7 @@ export const StoreModal = () => {
                     <FormControl>
                       {/*manejo de errores */}
                       <Input
-                        disabled={loading}
+                        disabled={loading || isLoading}
                         className="bg-white border-2 text-[#252440] placeholder-gray-500"
                         placeholder="Store Name"
                         {...field}
@@ -271,7 +272,7 @@ export const StoreModal = () => {
                     <FormLabel>Store Address</FormLabel>
                     <FormControl>
                       <Textarea
-                        disabled={loading}
+                        disabled={loading || isLoading}
                         ref={textareaRef}
                         value={field.value}
                         onChange={handleTextAreaChange(field)}
@@ -386,7 +387,7 @@ export const StoreModal = () => {
 
               <div className="pt-6 space-x-2 flex items-center justify-end w-full">
                 <Button
-                  disabled={loading}
+                  disabled={loading || isLoading}
                   className="border-2 border-[#252440] text-[#252440] hover:bg-[#252440] hover:text-white"
                   variant="outline"
                   onClick={storeModal.onClose}
@@ -394,7 +395,7 @@ export const StoreModal = () => {
                   Cancel
                 </Button>
                 <Button
-                  disabled={loading}
+                  disabled={loading || isLoading}
                   className="border-2 text-[#252440] bg-[#FFD700] hover:bg-[#ADD8E6] border-[#252440] hover:border-[#FFD700] transition duration-300 ease-in-out hover:text-[#FFFFFF]"
                   type="submit"
                 >

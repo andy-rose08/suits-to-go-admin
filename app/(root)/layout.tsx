@@ -23,5 +23,5 @@ export default async function SetUpLayout({
     redirect(`/${store.store_id}`);
   }
 
-  return <>{children}</>;
+  return <main className="bg-white dark:bg-[#0D1A26]">{children}</main>;
 }
