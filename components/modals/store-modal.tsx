@@ -253,7 +253,10 @@ export const StoreModal = () => {
                       {/*manejo de errores */}
                       <Input
                         disabled={loading || isLoading}
-                        className="bg-white border-2 text-[#252440] placeholder-gray-500"
+                        className="bg-white 
+                        dark:bg-[#0D1A26]
+                        dark:text-white
+                        border-2 text-[#252440] placeholder-gray-500"
                         placeholder="Store Name"
                         {...field}
                       />
@@ -276,7 +279,10 @@ export const StoreModal = () => {
                         value={field.value}
                         onChange={handleTextAreaChange(field)}
                         style={{ height, maxHeight: "200px" }}
-                        className="resize-none bg-white border-2 text-[#252440] placeholder-gray-500"
+                        className="resize-none 
+                        dark:bg-[#0D1A26]
+                        dark:text-white
+                        bg-white border-2 text-[#252440] placeholder-gray-500"
                         placeholder="Store Address"
                       />
                     </FormControl>
@@ -296,13 +302,20 @@ export const StoreModal = () => {
                       onValueChange={handleProvinceChange(form, field.name)}
                     >
                       <FormControl>
-                        <SelectTrigger className="dark:text-black text-black">
+                        <SelectTrigger
+                          className="placeholder-gray-500 dark:text-white
+                      text-[#252440] border border-[#252440] dark:border-white dark:bg-[#0D1A26]"
+                        >
                           <SelectValue placeholder="Select a province" />
                         </SelectTrigger>
                       </FormControl>
-                      <SelectContent className="text-black">
+                      <SelectContent className="dark:bg-[#0D1A26] dark:border-white dark:text-white">
                         {locationData?.provinces.map((province) => (
                           <SelectItem
+                            className="dark:hover:bg-gray-700
+                          dark:hover:text-white
+                          dark:focus:bg-gray-700
+                          dark:focus:text-white"
                             key={province.province_id}
                             value={province.province_id} // Use province_id as the value
                           >
@@ -328,13 +341,20 @@ export const StoreModal = () => {
                         onValueChange={handleCantonChange(form, field.name)}
                       >
                         <FormControl>
-                          <SelectTrigger className="placeholder-gray-500 dark:text-[#252440] text-[#252440]">
+                          <SelectTrigger
+                            className="placeholder-gray-500 dark:text-white
+                      text-[#252440] border border-[#252440] dark:border-white dark:bg-[#0D1A26]"
+                          >
                             <SelectValue placeholder="Select a canton" />
                           </SelectTrigger>
                         </FormControl>
-                        <SelectContent>
+                        <SelectContent className="dark:bg-[#0D1A26] dark:border-white dark:text-white">
                           {cantons.map((canton) => (
                             <SelectItem
+                              className="dark:hover:bg-gray-700
+                          dark:hover:text-white
+                          dark:focus:bg-gray-700
+                          dark:focus:text-white"
                               key={canton.canton_id}
                               value={canton.canton_id}
                             >
@@ -363,13 +383,20 @@ export const StoreModal = () => {
                         }
                       >
                         <FormControl>
-                          <SelectTrigger className="dark:text-black text-black">
+                          <SelectTrigger
+                            className="placeholder-gray-500 dark:text-white
+                      text-[#252440] border border-[#252440] dark:border-white dark:bg-[#0D1A26]"
+                          >
                             <SelectValue placeholder="Select a district" />
                           </SelectTrigger>
                         </FormControl>
-                        <SelectContent>
+                        <SelectContent className="dark:bg-[#0D1A26] dark:border-white dark:text-white">
                           {districts.map((district) => (
                             <SelectItem
+                              className="dark:hover:bg-gray-700
+                          dark:hover:text-white
+                          dark:focus:bg-gray-700
+                          dark:focus:text-white"
                               key={district.district_id}
                               value={district.district_id}
                             >

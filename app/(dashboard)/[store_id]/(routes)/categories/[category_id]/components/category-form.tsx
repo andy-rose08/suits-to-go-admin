@@ -178,16 +178,26 @@ export const CategoryForm: React.FC<CategoryFormProps> = ({
                     defaultValue={field.value}
                   >
                     <FormControl>
-                      <SelectTrigger className="placeholder-gray-500 dark:text-[#252440] text-[#252440]">
+                      <SelectTrigger
+                        className="placeholder-gray-500 dark:text-white
+                      text-[#252440] border border-[#252440] dark:border-white dark:bg-[#0D1A26]"
+                      >
                         <SelectValue
                           defaultValue={field.value}
                           placeholder="Select a Billboard"
                         />
                       </SelectTrigger>
                     </FormControl>
-                    <SelectContent>
+                    <SelectContent className="dark:bg-[#0D1A26] dark:border-white dark:text-white">
                       {billboards.map((billboard) => (
-                        <SelectItem key={billboard.id} value={billboard.id}>
+                        <SelectItem
+                          className="dark:hover:bg-gray-700
+                          dark:hover:text-white
+                          dark:focus:bg-gray-700
+                          dark:focus:text-white"
+                          key={billboard.id}
+                          value={billboard.id}
+                        >
                           {billboard.label}
                         </SelectItem>
                       ))}
