@@ -76,6 +76,7 @@ model Store {
   sizes      Size[] @relation("StoreToSize") // Define the relationship with sizes
   color      Color[] @relation("StoreToColor") // Define the relationship with colors
   products   Product[] @relation("StoreToProduct") // Define the relationship with products
+  orders     Order[] @relation("StoreToOrder") // Define the relationship with orders
   
 }
 
@@ -149,6 +150,9 @@ model Product{
   color_id          String
   color             Color    @relation(fields: [color_id], references: [color_id])
   images Image[]
+
+  orderItems        OrderItem[]
+
   createdAt         DateTime  @default(now())
   updatedAt         DateTime  @updatedAt
 
@@ -166,5 +170,32 @@ model Image{
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 
+  @@index([product_id])
+}
+
+
+model Order{
+  order_id          String    @id @default(cuid())
+  store_id    String
+  store       Store     @relation("StoreToOrder",fields: [store_id], references: [store_id])
+  orderItems  OrderItem[]
+  isPaid      Boolean  @default(false)
+  phone       String   @default("")
+  address     String   @default("")
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([store_id])
+}
+
+
+model OrderItem{ //many to many, intermediate table
+  id          String    @id @default(cuid())
+  order_id    String
+  order       Order     @relation(fields: [order_id], references: [order_id])
+  product_id  String
+  product     Product   @relation(fields: [product_id], references: [product_id])
+
+  @@index([order_id])
   @@index([product_id])
 }
