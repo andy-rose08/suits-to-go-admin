@@ -5,6 +5,7 @@ import StoreSwitcher from "./store-switcher";
 import { UserButton } from "@clerk/nextjs";
 import { useState, useEffect } from "react";
 import { Menu, X } from "lucide-react";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 export const ClientNavbar = ({ stores }: any) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -24,14 +25,14 @@ export const ClientNavbar = ({ stores }: any) => {
       }
     };
 
-    window.addEventListener('resize', handleResize);
+    window.addEventListener("resize", handleResize);
 
     // Limpia el controlador de eventos cuando el componente se desmonta
     return () => {
-      window.removeEventListener('resize', handleResize);
+      window.removeEventListener("resize", handleResize);
     };
   }, []);
-  
+
   return (
     <div className="border-b bg-[#252440] dark:bg-[#0D1A26] text-[#FFD700]">
       <div className="flex h-16 items-center px-4 flex-col sm:flex-row sm:justify-between">
@@ -39,6 +40,7 @@ export const ClientNavbar = ({ stores }: any) => {
           <StoreSwitcher items={stores} className="mb-2 sm:mb-0" />
         </div>
         <div className="ml-auto flex items-center space-x-4 sm:block">
+          <ThemeToggle />
           <UserButton afterSignOutUrl="/" />
         </div>
       </div>
