@@ -14,8 +14,8 @@ export async function POST(
     const {
       name,
       price,
-      color_id,
       category_id,
+      color_id,
       size_id,
       images,
       isFeatured,
@@ -36,11 +36,11 @@ export async function POST(
     }
 
     if (!category_id) {
-      return new NextResponse("Missing required category_id", { status: 400 });
+      return new NextResponse("Missing required category id", { status: 400 });
     }
 
     if (!size_id) {
-      return new NextResponse("Missing required size_id", { status: 400 });
+      return new NextResponse("Missing required size id", { status: 400 });
     }
 
     if (!images || !images.length) {
@@ -48,7 +48,7 @@ export async function POST(
     }
 
     if (!color_id) {
-      return new NextResponse("Missing required color_id", { status: 400 });
+      return new NextResponse("Missing required color id", { status: 400 });
     }
 
     if (!params.store_id) {
@@ -105,7 +105,7 @@ export async function GET(
     const size_id = searchParams.get("size_id") || undefined;
     const color_id = searchParams.get("color_id") || undefined;
     const isFeatured = searchParams.get("isFeatured");
-    // const isArchived = searchParams.get("isArchived");
+  
     // ------------------------------
     if (!params.store_id) {
       return new NextResponse("Missing required Store ID", { status: 400 });
@@ -115,8 +115,8 @@ export async function GET(
       where: {
         store_id: params.store_id,
         category_id,
-        size_id,
         color_id,
+        size_id,
         isFeatured: isFeatured ? true : undefined,
         isArchived: false,
       },

@@ -6,11 +6,10 @@ import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Heading } from "@/components/ui/heading";
 import { Separator } from "@/components/ui/separator";
-import { Product } from "@prisma/client";
-import { ProductColumn, columns } from "./colums";
 import { DataTable } from "@/components/ui/data-table";
 import { ApiList } from "@/components/ui/api-list";
 
+import { ProductColumn, columns } from "./colums";
 interface ProductClientProps {
   data: ProductColumn[];
 }
@@ -28,7 +27,7 @@ export const ProductClient: React.FC<ProductClientProps> = ({ data }) => {
         <Button
           className="dark:bg-emerald-500 dark:hover:bg-[#ADD8E6] border-2 dark:border-[#FFFFFF] dark:hover:border-[#FFD700] transition duration-300 ease-in-out dark:hover:text-white
         
-         bg-emerald-500 hover:bg-[#ADD8E6] border-[#252440] hover:border-[#FFD700]  hover:text-[#252440]
+        bg-emerald-500 hover:bg-[#ADD8E6] border-[#252440] hover:border-[#FFD700]  hover:text-[#252440]
         "
           onClick={() => router.push(`/${params.store_id}/products/new`)}
         >

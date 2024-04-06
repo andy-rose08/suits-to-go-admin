@@ -33,8 +33,8 @@ export async function GET(
 
 // PATCH /api/stores/[store_id]
 export async function PATCH( //PATCH es para actualizar el billboard
-  req: Request,
-  { params }: { params: { store_id: string; billboard_id: string } } //params siempre esta presente
+req: Request,
+{ params }: { params: { store_id: string; billboard_id: string } } //params siempre esta presente
 ) {
   //api/[store_id]/billboards/[billboard_id]
   try {

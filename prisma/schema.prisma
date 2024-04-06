@@ -44,7 +44,7 @@ model District {
 
 
 model Location {
-  location_id String   @id @default(cuid())
+  location_id String   @id @default(uuid())
   address     String
   province_id String
   canton_id   String
@@ -65,7 +65,7 @@ model Location {
 
 
 model Store {
-  store_id   String    @id @default(cuid())
+  store_id   String    @id @default(uuid())
   store_name String
   userId     String
   createdAt  DateTime  @default(now())
@@ -82,7 +82,7 @@ model Store {
 
 
 model Billboard{
-  id         String    @id @default(cuid())
+  id         String    @id @default(uuid())
   store_id   String
   store      Store     @relation("StoreToBillboard",fields: [store_id], references: [store_id])// Define the relationship with stores, la cual pertenece a un store especifico
   label       String
@@ -95,7 +95,7 @@ model Billboard{
 }
 
 model Category{
-  category_id        String    @id @default(cuid())
+  category_id        String    @id @default(uuid())
   name               String
   store_id           String
   store              Store     @relation(fields: [store_id], references: [store_id])
@@ -111,7 +111,7 @@ model Category{
 }
 
 model Size{
-  size_id        String    @id @default(cuid())
+  size_id        String    @id @default(uuid())
   store_id       String
   store          Store     @relation("StoreToSize",fields: [store_id], references: [store_id])
   name           String
@@ -124,7 +124,7 @@ model Size{
 }
 
 model Color{
-  color_id        String    @id @default(cuid())
+  color_id        String    @id @default(uuid())
   store_id       String
   store          Store     @relation("StoreToColor",fields: [store_id], references: [store_id])
   name           String
@@ -132,24 +132,25 @@ model Color{
   createdAt      DateTime  @default(now())
   updatedAt      DateTime  @updatedAt
   @@index([store_id])
+
   products       Product[]
 }
 
 model Product{
-  product_id        String    @id @default(cuid())
+  product_id        String    @id @default(uuid())
   store_id          String
   store             Store     @relation("StoreToProduct",fields: [store_id], references: [store_id])
   category_id       String
   category          Category  @relation("CategoryToProduct",fields: [category_id], references: [category_id])
   name              String
-  price             Decimal
+  price             Float
   isFeatured        Boolean  @default(false)
   isArchived        Boolean  @default(false)
   size_id           String
   size              Size     @relation(fields: [size_id], references: [size_id])
   color_id          String
   color             Color    @relation(fields: [color_id], references: [color_id])
-  images Image[]
+  images            Image[]
 
   orderItems        OrderItem[]
 
@@ -163,7 +164,7 @@ model Product{
 }
 
 model Image{
-  image_id       String    @id @default(cuid())
+  image_id       String    @id @default(uuid())
   product_id     String
   product        Product   @relation(fields: [product_id], references: [product_id], onDelete: Cascade)
   url           String
@@ -175,7 +176,7 @@ model Image{
 
 
 model Order{
-  order_id          String    @id @default(cuid())
+  order_id          String    @id @default(uuid())
   store_id    String
   store       Store     @relation("StoreToOrder",fields: [store_id], references: [store_id])
   orderItems  OrderItem[]
@@ -190,7 +191,7 @@ model Order{
 
 
 model OrderItem{ //many to many, intermediate table
-  id          String    @id @default(cuid())
+  id          String    @id @default(uuid())
   order_id    String
   order       Order     @relation(fields: [order_id], references: [order_id])
   product_id  String

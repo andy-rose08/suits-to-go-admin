@@ -1,17 +1,19 @@
 import { format } from "date-fns";
 
-import { ProductClient } from "./components/client";
 import prismadb from "@/lib/prismadb";
-import { ProductColumn } from "./components/colums";
 import { formatter } from "@/lib/utils";
 
+import { ProductClient } from "./components/client";
+import { ProductColumn } from "./components/colums";
+
 const ProductsPage = async ({ params }: { params: { store_id: string } }) => {
+
   const products = await prismadb.product.findMany({
     where: {
       store_id: params.store_id,
     },
     include: {
-      //las relaciones, en forma de un objeto
+      //las relaciones de los modelos, en forma de un objeto
       category: true,
       size: true,
       color: true,
@@ -26,7 +28,7 @@ const ProductsPage = async ({ params }: { params: { store_id: string } }) => {
     name: product.name,
     isFeatured: product.isFeatured,
     isArchived: product.isArchived,
-    price: formatter.format(product.price.toNumber()),
+    price: formatter.format(product.price),
     category: product.category.name,
     size: product.size.name,
     color: product.color.value,

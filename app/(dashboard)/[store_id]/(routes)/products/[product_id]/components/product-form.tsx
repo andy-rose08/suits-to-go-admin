@@ -54,7 +54,7 @@ const formSchema = z.object({
       url: z.string(),
     })
     .array(),
-  price: z.coerce.number().min(1).positive(),
+  price: z.coerce.number().min(1),
   category_id: z.string().nonempty("Category is required"),
   color_id: z.string().nonempty("Color is required"),
   size_id: z.string().nonempty("Size is required"),
@@ -85,7 +85,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
     defaultValues: initialData
       ? {
           ...initialData,
-          price: parseFloat(String(initialData.price)), //parseFloat convierte un string a un número de punto flotante porque en la BD es un decimal, y zod lo identifica de otra forma
+          price: initialData?.price,
         }
       : {
           name: "",

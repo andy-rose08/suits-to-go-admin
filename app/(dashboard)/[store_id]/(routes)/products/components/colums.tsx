@@ -51,7 +51,7 @@ export const columns: ColumnDef<ProductColumn>[] = [
           style={{
             backgroundColor: row.original.color,
           }}
-        ></div>
+        />
       </div>
     ),
   },
