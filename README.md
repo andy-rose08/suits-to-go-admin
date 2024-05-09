@@ -69,6 +69,19 @@ npm install
 yarn install
 ```
 
+## Usar prisma db
+Generar el cliente Prisma: Este comando genera el cliente Prisma basado en tu esquema de datos. Ejecútalo en la raíz de tu proyecto:
+
+```bash
+npx prisma generate
+```
+
+Hacer push a la base de datos: Este comando actualiza tu base de datos para que coincida con tu esquema de datos. Ejecútalo en la raíz de tu proyecto:
+
+```bash
+npx prisma db push
+```
+
 ## Aprende Más
 
 Para aprender más sobre Next.js, echa un vistazo a los siguientes recursos:
